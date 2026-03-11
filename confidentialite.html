@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confidentialité — Toufflers Simulation RP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #080c10;
+      --surface: #0e1420;
+      --accent: #e8c84a;
+      --accent2: #3b82f6;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --border: #1e2d42;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 64px;
+      background: rgba(8,12,16,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--text); }
+    nav ul { display: flex; gap: 1.5rem; list-style: none; }
+    nav ul a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--accent); }
+    .nav-discord {
+      background: #5865F2;
+      color: #fff !important;
+      padding: 0.4rem 1.1rem;
+      border-radius: 4px;
+      font-size: 0.8rem !important;
+    }
+
+    .page-hero {
+      padding: 120px 2rem 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: 60px; right: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .breadcrumb {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+    }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .page-label {
+      display: inline-block;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      color: var(--accent2);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2px;
+      margin-bottom: 1rem;
+    }
+    .page-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      letter-spacing: 0.03em;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .page-hero p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 520px;
+    }
+    .update-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    .update-badge span {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.7rem;
+      border-radius: 2px;
+    }
+    .rgpd-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: #4ade80;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.8rem;
+      border-radius: 2px;
+      margin-top: 0.8rem;
+    }
+
+    .switch-bar {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 1.5rem;
+      display: flex;
+      gap: 0.8rem;
+    }
+    .switch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.2rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .switch-btn.active {
+      background: var(--accent2);
+      color: #fff;
+    }
+    .switch-btn.other {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .switch-btn.other:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .legal-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+    .legal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .legal-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent2), transparent);
+    }
+    .legal-box h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      color: var(--accent2);
+      letter-spacing: 0.05em;
+      margin: 2rem 0 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .legal-box h3:first-of-type { margin-top: 0; }
+    .legal-box h3::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 1.1rem;
+      background: var(--accent2);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .legal-box p, .legal-box li {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      line-height: 1.8;
+    }
+    .legal-box ul {
+      padding-left: 1.4rem;
+      margin: 0.6rem 0;
+    }
+    .legal-box ul li { margin-bottom: 0.4rem; }
+    .legal-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .separator {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 2rem 0;
+    }
+    .info-box {
+      background: rgba(59,130,246,0.07);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 6px;
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      color: #93c5fd;
+      font-size: 0.85rem;
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+      line-height: 1.6;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.82rem;
+    }
+    .data-table th {
+      background: rgba(232,200,74,0.08);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: left;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid rgba(30,45,66,0.5);
+      color: #94a3b8;
+      vertical-align: top;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .toc {
+      background: rgba(59,130,246,0.05);
+      border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .toc-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .toc ol { padding-left: 1.2rem; }
+    .toc li {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .toc li a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .toc li a:hover { color: var(--accent2); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    footer strong { color: var(--accent); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="toufflers-rp.html" class="nav-logo">TOUFFLERS<span>RP</span></a>
+  <ul>
+    <li><a href="toufflers-rp.html#bots">Bots</a></li>
+    <li><a href="cgu.html">CGU</a></li>
+    <li><a href="confidentialite.html">Confidentialité</a></li>
+    <li><a href="https://discord.gg/" class="nav-discord" target="_blank">Discord</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div class="breadcrumb">
+    <a href="toufflers-rp.html">Accueil</a> &nbsp;/&nbsp; Politique de confidentialité
+  </div>
+  <div class="page-label">🔒 RGPD Conforme</div>
+  <h1>POLITIQUE DE<br>CONFIDENTIALITÉ</h1>
+  <p>Comment Toufflers Simulation Roleplay collecte, utilise et protège vos données personnelles dans le respect du RGPD.</p>
+  <div class="update-badge">
+    <span>📅 Dernière mise à jour : Mars 2025</span>
+    <span>v1.0</span>
+  </div>
+  <div class="rgpd-badge">✅ Conforme Règlement Général sur la Protection des Données (UE 2016/679)</div>
+</div>
+
+<div class="switch-bar">
+  <a href="cgu.html" class="switch-btn other">📋 Conditions d'utilisation</a>
+  <a href="confidentialite.html" class="switch-btn active">🔒 Politique de confidentialité</a>
+</div>
+
+<div class="legal-content">
+  <div class="legal-box">
+    <div class="legal-meta">
+      <span>📄 Toufflers Simulation Roleplay</span>
+      <span>🗓️ Mars 2025</span>
+      <span>🌐 Serveur FiveM & Discord</span>
+    </div>
+
+    <div class="toc">
+      <div class="toc-title">// Sommaire</div>
+      <ol>
+        <li><a href="#p1">Introduction</a></li>
+        <li><a href="#p2">Données collectées</a></li>
+        <li><a href="#p3">Finalités du traitement</a></li>
+        <li><a href="#p4">Conservation des données</a></li>
+        <li><a href="#p5">Partage des données</a></li>
+        <li><a href="#p6">Sécurité</a></li>
+        <li><a href="#p7">Vos droits</a></li>
+        <li><a href="#p8">Cookies</a></li>
+        <li><a href="#p9">Bots Discord tiers</a></li>
+        <li><a href="#p10">Modifications & Contact</a></li>
+      </ol>
+    </div>
+
+    <h3 id="p1">1. Introduction</h3>
+    <p>La présente politique de confidentialité décrit comment Toufflers Simulation Roleplay (« TSR ») collecte, utilise et protège vos données personnelles dans le cadre de l'utilisation de nos services : serveur Discord, serveur FiveM et site web. TSR s'engage à traiter vos données dans le strict respect du Règlement Général sur la Protection des Données (RGPD — UE 2016/679).</p>
+
+    <div class="separator"></div>
+
+    <h3 id="p2">2. Données collectées</h3>
+    <p>Dans le cadre de votre utilisation de nos services, nous sommes amenés à collecter les données suivantes :</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Donnée</th>
+          <th>Source</th>
+          <th>Utilisation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Identifiant Discord (ID)</td>
+          <td>Discord</td>
+          <td>Gestion des rôles, sanctions, whitelist</td>
+        </tr>
+        <tr>
+          <td>Pseudo & avatar Discord</td>
+          <td>Discord</td>
+          <td>Identification dans les canaux publics</td>
+        </tr>
+        <tr>
+          <td>Identifiant FiveM / Steam</td>
+          <td>FiveM</td>
+          <td>Authentification au serveur de jeu</td>
+        </tr>
+        <tr>
+          <td>Logs de connexion</td>
+          <td>Serveur FiveM</td>
+          <td>Suivi d'activité, sécurité</td>
+        </tr>
+        <tr>
+          <td>Historique des sanctions</td>
+          <td>Staff TSR</td>
+          <td>Modération et prévention des abus</td>
+        </tr>
+        <tr>
+          <td>Tickets de support</td>
+          <td>Bot Discord</td>
+          <td>Traitement des demandes d'aide</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="separator"></div>
+
+    <h3 id="p3">3. Finalités du traitement</h3>
+    <p>Les données collectées sont utilisées exclusivement dans les finalités suivantes, et ne font l'objet d'aucun traitement à des fins commerciales ou publicitaires :</p>
+    <ul>
+      <li>Gérer l'accès au serveur FiveM (whitelist, authentification, profils joueurs).</li>
+      <li>Assurer la modération et la sécurité de la communauté TSR.</li>
+      <li>Traiter les demandes de support soumises via le système de tickets.</li>
+      <li>Tenir un historique des sanctions à des fins de modération continue.</li>
+      <li>Produire des statistiques anonymisées sur l'activité du serveur.</li>
+      <li>Améliorer l'expérience globale des joueurs.</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <h3 id="p4">4. Conservation des données</h3>
+    <p>Vos données sont conservées aussi longtemps que vous êtes membre actif de la communauté TSR. En cas de départ volontaire, vos données non essentielles sont supprimées sur simple demande dans un délai de 30 jours.</p>
+    <p style="margin-top:0.6rem;">Exception : en cas de bannissement permanent, certaines données techniques (identifiants, historique des sanctions) peuvent être conservées pour prévenir les tentatives de contournement du bannissement. Cette conservation est fondée sur l'intérêt légitime de TSR à maintenir la sécurité de la communauté.</p>
+
+    <div class="separator"></div>
+
+    <h3 id="p5">5. Partage des données</h3>
+    <p>TSR ne vend, ne loue et ne cède pas vos données personnelles à des tiers à des fins commerciales. Les données peuvent être partagées uniquement dans les cas suivants :</p>
+    <ul>
+      <li><strong style="color:var(--text)">Obligation légale</strong> — sur réquisition judiciaire ou administrative.</li>
+      <li><strong style="color:var(--text)">Staff interne</strong> — accès limité aux membres du staff ayant un besoin légitime.</li>
+      <li><strong style="color:var(--text)">Services tiers nécessaires</strong> — Discord Inc., CFX.re (FiveM), dans les limites de leurs politiques propres.</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <h3 id="p6">6. Sécurité</h3>
+    <p>TSR met en œuvre des mesures techniques et organisationnelles adaptées pour protéger vos données contre tout accès non autorisé, perte accidentelle, modification ou destruction. L'accès aux données sensibles est strictement limité aux membres du staff habilités, sous couvert d'une obligation de confidentialité.</p>
+
+    <div class="separator"></div>
+
+    <h3 id="p7">7. Vos droits</h3>
+    <p>Conformément au RGPD, vous disposez des droits suivants concernant vos données personnelles :</p>
+    <ul>
+      <li><strong style="color:var(--text)">Droit d'accès (Art. 15)</strong> — obtenir une copie des données vous concernant.</li>
+      <li><strong style="color:var(--text)">Droit de rectification (Art. 16)</strong> — faire corriger des données inexactes.</li>
+      <li><strong style="color:var(--text)">Droit à l'effacement (Art. 17)</strong> — demander la suppression de vos données.</li>
+      <li><strong style="color:var(--text)">Droit d'opposition (Art. 21)</strong> — vous opposer à un traitement spécifique.</li>
+      <li><strong style="color:var(--text)">Droit à la portabilité (Art. 20)</strong> — recevoir vos données dans un format structuré.</li>
+    </ul>
+    <div class="info-box">ℹ️ Pour exercer l'un de ces droits, ouvrez un ticket sur le serveur Discord TSR en indiquant clairement votre demande. Nous nous engageons à y répondre dans un délai maximum de 30 jours.</div>
+
+    <div class="separator"></div>
+
+    <h3 id="p8">8. Cookies</h3>
+    <p>Notre site web utilise uniquement des cookies techniques strictement nécessaires au fonctionnement des pages. Aucun cookie de tracking, de profilage ou publicitaire n'est déposé. Aucune donnée de navigation n'est transmise à des tiers à des fins analytiques.</p>
+
+    <div class="separator"></div>
+
+    <h3 id="p9">9. Bots Discord tiers</h3>
+    <p>Certains bots présents sur notre serveur Discord sont développés par des tiers (Carl-bot, MEE6, etc.) et disposent de leurs propres politiques de confidentialité. TSR n'est pas responsable du traitement des données effectué directement par ces services. Nous vous invitons à consulter leurs politiques respectives sur leurs sites officiels.</p>
+
+    <div class="separator"></div>
+
+    <h3 id="p10">10. Modifications & Contact</h3>
+    <p>TSR se réserve le droit de modifier la présente politique à tout moment. La date de dernière mise à jour est toujours indiquée en haut de ce document. Les modifications substantielles feront l'objet d'une annonce sur le serveur Discord.</p>
+    <p style="margin-top:0.6rem;">Pour toute question relative à la protection de vos données personnelles, contactez notre équipe via un ticket sur le serveur Discord de Toufflers Simulation Roleplay.</p>
+  </div>
+</div>
+
+<footer>
+  <p style="font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.4rem;">TOUFFLERS RP</p>
+  <p>© 2025 <strong>Toufflers Simulation Roleplay</strong> — Tous droits réservés.</p>
+  <p style="margin-top:0.3rem;">Serveur FiveM non officiel — non affilié à Rockstar Games ou FiveM.</p>
+</footer>
+
+</body>
+</html>
